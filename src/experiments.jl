@@ -13,3 +13,5 @@ include(src_link*"/src/utils/parameters_initialisation.jl")
 include(src_link*"/src/utils/models_generation.jl")
 
 single_level_problem = single_level_problem_generation(input_parameters)
+
+bi_level_problem = bi_level_problem_generation(input_parameters, "cournot")
