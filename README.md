@@ -10,9 +10,10 @@ and
 ```julia
 function bi_level_problem_generation(ip::initial_parameters, market::String)    
 ```
-That generates the centralised single-level model or bi-level respectfully. 
+That generate the centralised single-level model or bi-level model respectfully. 
 
 The parameter __ip__  is a structure that stores attributes for generating JuMP model with the following fileds 
+
 initial_parameters
 
 * num_scen::Int                                     Number of scenarios used in the model
@@ -29,10 +30,10 @@ initial_parameters
 * conv::conventional_generation_parameters          Conventional generation related parameters 
 * transm::transmission_parameters                   Transmission lines related paramters
 
-And the paramter __market__ is string variable that takes values "perfect" or "cournot" inidicating whther we should conisder perfect comptetion or the cournout ologopoly between investors at the lower level. 
+And the paramter __market__ is a string variable that takes values "perfect" or "cournot" indicating whether we should consider perfect comptetion or the cournot oligopoly between investors at the lower level. 
 
-The main code including all the correspondent packages and files islocated in the file experiments.jl. 
+The main code including all the correspondent packages and files is located in the file __experiments.jl__. 
 
 To run the code change the string file
-src_link  ="/Users/nikitabelyak/Dropbox (Aalto)/IIASA/TSEP" to point to a link to the location of the repository on your local device. 
+__src_link__ ="/Users/nikitabelyak/Dropbox (Aalto)/IIASA/TSEP" to point to a link to the location of the repository on your local device. 
 
