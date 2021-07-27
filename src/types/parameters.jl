@@ -46,14 +46,14 @@ Stores energy transmission realted parameters. Has the following fields:
 * installed_capacities::Array{Float64}              Installed capacities for each of the nodes (MW)
 * maintenance_costs::Array{Float64}                 Maintenace costs for each of the nodes (€/MW)
 * investment_costs::Array{Float64}                  Capacity expansion costs for each node (€/MW)
-* transmissio_costs::Array{Float64}                 Transmission costs for each of the nodes (€/MWh)
+#* transmissio_costs::Array{Float64}                 Transmission costs for each of the nodes (€/MWh)
 
 """
 mutable struct transmission_parameters
     installed_capacities::Array{Float64}
     maintenance_costs::Array{Float64}
     investment_costs::Array{Float64}
-    transmissio_costs::Array{Float64}
+    #transmissio_costs::Array{Float64}
 end
 
 
