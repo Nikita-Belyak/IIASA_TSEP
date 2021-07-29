@@ -35,5 +35,5 @@ And the paramter __market__ is a string variable that takes values "perfect" or 
 The main code including all the correspondent packages and files is located in the file __experiments.jl__. 
 
 To run the code change the string file
-__src_link__ ="/Users/nikitabelyak/Dropbox (Aalto)/IIASA/TSEP" to point to a link to the location of the repository on your local device. 
+__src_link__ = "/Users/nikitabelyak/Dropbox (Aalto)/IIASA/TSEP" to point to a link to the location of the repository on your local device. 
 

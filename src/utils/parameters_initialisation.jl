@@ -68,7 +68,8 @@ Lifetime_lines = Matrix(DataFrame(CSV.File(data_src_link * "/transmission_lines/
 I_lines = equivalent_annual_cost.(float.(Costs_lines .* Distance_lines .+ Converter_costs_lines),
 float.(Lifetime_lines), interest_rate) 
 I_lines = replace(I_lines, NaN=>0)
-@show I_lines
+I_lines = zeros(size(I_lines))
+#@show I_lines
 # Maintenance costs 
 M_lines = Matrix(DataFrame(CSV.File(data_src_link * "/transmission_lines/" * "lines_maintenance_costs.csv"))[!,:]) .* I_lines
 

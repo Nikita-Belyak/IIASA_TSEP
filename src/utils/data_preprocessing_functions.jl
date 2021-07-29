@@ -61,29 +61,36 @@ function lif_slope_and_intercept_generation(data_src_link::String, N_nodes::Int6
     for n = 1:N_nodes
 
         # read the correspondent to the node demand and price data
-        node_data = Matrix(DataFrame(CSV.File(data_src_link * "/inverse_demand/" * "demand_and_prices_" * string(n) * ".csv"))[!,2:3])
+        node_data = (Matrix(DataFrame(CSV.File(data_src_link * "/inverse_demand/" * "demand_and_prices_" * string(n) * ".csv"))[!,2:3]))
+        # making sure all the elements are of the type Float (were not read like String)
         #node_data[:,1] = -0.5 .* node_data[:,1]
 
         for s in 1:N_scen
     
         # extract the hourly data that corresponds to the scenario under consideration
-        scenario_data = node_data[hours_to_be_extracted[s], :]
+        scenario_data = (node_data[hours_to_be_extracted[s], :])
+        @show typeof(scenario_data)
+        if typeof(scenario_data) == Array{Any,2}
+            #convert(Array{Float64}, scenario_data)
+            scenario_data = map(x->parse(Float64,x),string.(scenario_data))
+        end
         
             for t = 1:N_T
 
                 # caluclate the hours within the scenario that correspond to the time period t
                 time_period_indexes = (t==1 ? 0 : T_accumulated[t-1])+1 : T_accumulated[t]
-
+                
                 # approximate the data set corresponding to the time period with the polynomial of the 1st degree
-                LinearRegression = np.polyfit(scenario_data[time_period_indexes, 1], scenario_data[time_period_indexes, 2], 1)
+                #LinearRegression = np.polyfit(scenario_data[time_period_indexes, 1], scenario_data[time_period_indexes, 2], 1)
 
                 # save the correspodent values
-                id_slope[s,t,n] = LinearRegression[1]
-                id_intercept[s,t,n] = LinearRegression[2]
+                #id_slope[s,t,n] = LinearRegression[1]
+                #id_intercept[s,t,n] = LinearRegression[2]
 
-                epsilon = -0.3 # demand elasticity
-                id_slope[s,t,n] = -mean(scenario_data[time_period_indexes, 2])*10/(epsilon * mean(scenario_data[time_period_indexes, 1]))
-                id_intercept[s,t,n] = mean(scenario_data[time_period_indexes, 2])*10 + id_slope[s,t,n]* mean(scenario_data[time_period_indexes, 1])
+                epsilon = -0.3 # demand elasticity 
+                @show scenario_data[time_period_indexes, 2]
+                id_slope[s,t,n] = -mean(scenario_data[time_period_indexes, 2]) * (10 - n) / (epsilon * mean(scenario_data[time_period_indexes, 1]))
+                id_intercept[s,t,n] = mean(scenario_data[time_period_indexes, 2]) * (10 - n) + id_slope[s,t,n] * mean(scenario_data[time_period_indexes, 1])
             end
         end
     end
