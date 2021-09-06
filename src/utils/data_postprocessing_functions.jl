@@ -5,17 +5,42 @@ function print_output(...) prints the output resutling from the model optimisati
 Arguments of the function:
 * src_link::String:                 The link at which the output .txt file to be stored 
 * ip::initial_parameters            Initial parameters of the model 
+* ob_val::Float64                   The objective function value 
 * l_plus::Array{Float64}            The optimal values the transmission lines capacity expansion 
 * g_VRES_plus::Array{Float64}       The optimal values the VRES capacity expansion
 * g_conv_plus::Array{Float64}       The optimal values conventional sources capacity expansion
 * g_VRES::Array{Float64}            The optimal VRES generation values
 * g_conv::Array{Float64}            The optimal convetional sources generation values
 * f::Array{Float64}                 The optimal energy flow values
+* model::String                     The indicator on which model are we considering (single_level, bi_level_cournot or bi_level_perfect)
+* sf::Float64                       The scaling factor for the model parameters
 """
 
 
-function print_output(src_link::String, ip::initial_parameters, l_plus::Array{Float64}, g_VRES_plus::Array{Float64}, g_conv_plus::Array{Float64}, g_VRES::Array{Float64}, g_conv::Array{Float64}, f::Array{Float64})
-    io = open(src_link*"/single_level_problem_output.txt" ,"w")
+function print_output(src_link::String, ip::initial_parameters, ob_val::Float64, l_plus::Array{Float64}, g_VRES_plus::Array{Float64}, g_conv_plus::Array{Float64}, g_VRES::Array{Float64}, g_conv::Array{Float64}, f::Array{Float64}, model::String, sf::Float64)
+    
+    #rounding all the values 
+    round_digits = 3
+    ob_val = round(ob_val, digits = round_digits)
+    l_plus = round.(l_plus, digits = round_digits)
+    g_VRES_plus = round.(g_VRES_plus, digits = round_digits)
+    g_conv_plus = round.(g_conv_plus, digits = round_digits)
+    g_VRES = round.(g_VRES, digits = round_digits)
+    g_conv = round.(g_conv, digits = round_digits)
+    f = round.(f, digits = round_digits)
+    
+    if model == "single_level"
+        io = open(src_link*"/single_level_problem_output.txt" ,"w")
+    elseif model == "bi_level_cournot"
+        io = open(src_link*"/bi_level_cournot_problem_output.txt" ,"w")
+    else 
+        io = open(src_link*"/bi_level_perfect_problem_output.txt" ,"w")
+    end
+
+    println(io, "OBJECTIVE FUNCTION VALUE  $(ob_val*sf)")
+    println(io, "\n")
+
+
     println(io, "TRANSMISSION CAPACITY EXPANSION")
     println(io, "\n")
     nodes = string.(1:ip.num_nodes)
@@ -92,7 +117,7 @@ function print_output(src_link::String, ip::initial_parameters, l_plus::Array{Fl
     println(io, "ENERGY FLOW")
     println(io, "\n")
     for n = 1:ip.num_nodes
-        for m = n:ip.num_nodes
+        for m = n+1:ip.num_nodes
             println(io, "flow: $n -> $m ")
             df_flow = DataFrame()
             df_flow.scenario = 1:ip.num_scen

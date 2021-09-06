@@ -6,6 +6,8 @@ Stores VRES realted parameters. Has the following fields:
 * installed_capacities::Array{Float64}              Installed capacties at each node from each producer for each type of the VRES sources (MW)
 * maintenance_costs::Array{Float64}                 Maintenace costs at each node from each producer for each type of the VRES sources (€/MW) 
 * investment_costs::Array{Float64}                  Capacity expansion investment costs at each node from each producer for each type of the VRES sources (€/MW) 
+* budget_limits                                     Capacity expnasion budget limits for each of the producers 
+                                                    at each of the nodes (€)
 * availability_factor::Array{Float64}               Availability factor for each scenario and each time period at each node for each type of the VRES sources 
 
 """
@@ -13,6 +15,7 @@ mutable struct VRES_parameters
     installed_capacities::Array{Float64}
     maintenance_costs::Array{Float64}
     investment_costs::Array{Float64}
+    budget_limits::Array{Float64}
     availability_factor::Array{Float64}
 end
 
@@ -23,16 +26,18 @@ Stores conventional energy sources related parameters. Has the following fields:
 * installed_capacities::Array{Float64}              Installed capacties at each node from each producer (MW)
 * maintenance_costs::Array{Float64}                 Maintenace costs at each node from each producer (€/MW) 
 * investment_costs::Array{Float64}                  Capacity expansion investment costs at each node from each producer (€/MW) 
+* budget_limits                                     Capacity expnasion budget limits for each of the producers 
+                                                    at each of the nodes (€)
 * operational_costs::Array{Float64}                 Operational costs at each node from each producer (€/MWh)
 * ramp_up::Array{Float64}                           Maximum ramp-up rate
 * ramp_down::Array{Float64}                         Maximum ramp-down rate
 * CO2_tax::Array{Float64}                           Carbon tax for conventional generation (€/MWh)
-
 """
 mutable struct conventional_generation_parameters
     installed_capacities::Array{Float64}
     maintenance_costs::Array{Float64}
     investment_costs::Array{Float64}
+    budget_limits::Array{Float64}
     operational_costs::Array{Float64}
     ramp_up::Array{Float64}
     ramp_down::Array{Float64}
@@ -46,14 +51,14 @@ Stores energy transmission realted parameters. Has the following fields:
 * installed_capacities::Array{Float64}              Installed capacities for each of the nodes (MW)
 * maintenance_costs::Array{Float64}                 Maintenace costs for each of the nodes (€/MW)
 * investment_costs::Array{Float64}                  Capacity expansion costs for each node (€/MW)
-#* transmissio_costs::Array{Float64}                 Transmission costs for each of the nodes (€/MWh)
+* budget_limits::Array{Float64}                     Capacity expnasion budget limits for each of the nodes (€)
 
 """
 mutable struct transmission_parameters
     installed_capacities::Array{Float64}
     maintenance_costs::Array{Float64}
     investment_costs::Array{Float64}
-    #transmissio_costs::Array{Float64}
+    budget_limits::Array{Float64}
 end
 
 

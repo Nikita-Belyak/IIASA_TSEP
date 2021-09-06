@@ -1,4 +1,0 @@
-Nodes,Scenarios probabiblity,Time periods,VRES sources,Conventional sources,Producers 
-1,0.5,24,solar,coal ,1
-2,0.5,24,wind,nuclear ,2
-3,,,,gas,

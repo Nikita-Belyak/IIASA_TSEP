@@ -43,10 +43,11 @@ Parameters:
 * N_scen::Int64                 Number of scenarios
 * T::Array{Int64}               The array that contains the number of hours allocated to each time period 
 * hours_to_be_extracted         An array with the range of hours defined for each scenario 
+* sf::Float64                   Scalling factor for the model parameters (price in case of this function)
 
 """
 
-function lif_slope_and_intercept_generation(data_src_link::String, N_nodes::Int64, N_scen::Int64, T::Array{Int64}, hours_to_be_extracted::Array{UnitRange{Int64}})
+function lif_slope_and_intercept_generation(data_src_link::String, N_nodes::Int64, N_scen::Int64, T::Array{Int64}, hours_to_be_extracted::Array{UnitRange{Int64}}, sf::Float64)
 
     # accumulate the time periods
     T_accumulated = accumulate(+, T)
@@ -74,7 +75,8 @@ function lif_slope_and_intercept_generation(data_src_link::String, N_nodes::Int6
             #convert(Array{Float64}, scenario_data)
             scenario_data = map(x->parse(Float64,x),string.(scenario_data))
         end
-        
+        #scalling
+        scenario_data[:,2] = scenario_data[:,2] ./ sf
             for t = 1:N_T
 
                 # caluclate the hours within the scenario that correspond to the time period t
@@ -89,8 +91,8 @@ function lif_slope_and_intercept_generation(data_src_link::String, N_nodes::Int6
 
                 epsilon = -0.3 # demand elasticity 
                 @show scenario_data[time_period_indexes, 2]
-                id_slope[s,t,n] = -mean(scenario_data[time_period_indexes, 2]) * (10 - n) / (epsilon * mean(scenario_data[time_period_indexes, 1]))
-                id_intercept[s,t,n] = mean(scenario_data[time_period_indexes, 2]) * (10 - n) + id_slope[s,t,n] * mean(scenario_data[time_period_indexes, 1])
+                id_slope[s,t,n] = -mean(scenario_data[time_period_indexes, 2]) * 1 / (epsilon * mean(scenario_data[time_period_indexes, 1]))
+                id_intercept[s,t,n] = mean(scenario_data[time_period_indexes, 2]) * 1+ id_slope[s,t,n] * mean(scenario_data[time_period_indexes, 1])
             end
         end
     end
