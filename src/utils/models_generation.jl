@@ -94,7 +94,7 @@ function single_level_problem_generation(ip::initial_parameters)
                     + 
                     sum(g_VRES[s,t,n,i,r] for r in 1:ip.num_VRES) 
                     for i = 1:ip.num_prod)
-                + sum( f[s,t,n,m] for m in n+1:ip.num_nodes) - sum( 0.98*f[s,t,m,n] for m in 1:n-1)
+                + sum( f[s,t,n,m] for m in n+1:ip.num_nodes) - sum(f[s,t,m,n] for m in 1:n-1) #- sum( 0.98*f[s,t,m,n] for m in 1:n-1)
         == 0
     )
     
@@ -317,7 +317,7 @@ function bi_level_problem_generation(ip::initial_parameters, market::String)
                          + 
                         sum(g_VRES[s,t,n,i,r] for r in 1:ip.num_VRES) 
                         for i = 1:ip.num_prod)
-                        + sum( f[s,t,n,m] for m in n+1:ip.num_nodes) - sum( 0.98*f[s,t,m,n] for m in 1:n-1)
+                        + sum( f[s,t,n,m] for m in n+1:ip.num_nodes) - sum(f[s,t,m,n] for m in 1:n-1) #- sum( 0.98*f[s,t,m,n] for m in 1:n-1)
         == 0
     )
 
@@ -335,7 +335,7 @@ function bi_level_problem_generation(ip::initial_parameters, market::String)
     )
 
     # Primal feasibility for the transmission 
-    @constraint(bi_level_problem, [s in 1:ip.num_scen, t in 1:ip.num_time_periods, n in 1:ip.num_nodes, m in 1:n-1],
+    @constraint(bi_level_problem, [s in 1:ip.num_scen, t in 1:ip.num_time_periods, n in 1:ip.num_nodes, m in 1:n],
         f[s,t,n,m] == 0 
     )
 
@@ -391,14 +391,21 @@ function bi_level_problem_generation(ip::initial_parameters, market::String)
     #)
 
     @constraint( bi_level_problem, [ s in 1:ip.num_scen, t in 1:ip.num_time_periods, n in 1:ip.num_nodes, m in n+1:ip.num_nodes],
-       θ[s,t,n] + β_f_1[s,t,n,m] - β_f_2[s,t,n,m] >= 0  
-    )
-    @constraint( bi_level_problem, [ s in 1:ip.num_scen, t in 1:ip.num_time_periods, n in 1:ip.num_nodes, m in 1:n-1],
-       -0.98*θ[s,t,n] + β_f_1[s,t,n,m] - β_f_2[s,t,n,m] + λ_f[s,t,n,m] >= 0  
-    )
-    @constraint( bi_level_problem, [ s in 1:ip.num_scen, t in 1:ip.num_time_periods, n in 1:ip.num_nodes, m = n],
         β_f_1[s,t,n,m] - β_f_2[s,t,n,m] >= 0  
     )
+    
+    #@constraint( bi_level_problem, [ s in 1:ip.num_scen, t in 1:ip.num_time_periods, n in 1:ip.num_nodes, m in 1:n-1],
+       #-0.98*θ[s,t,n] + β_f_1[s,t,n,m] - β_f_2[s,t,n,m] + λ_f[s,t,n,m] >= 0  
+    #)
+
+        
+    @constraint( bi_level_problem, [ s in 1:ip.num_scen, t in 1:ip.num_time_periods, n in 1:ip.num_nodes, m in 1:n],
+        β_f_1[s,t,n,m] - β_f_2[s,t,n,m] + λ_f[s,t,n,m] >= 0  
+    )
+
+    #@constraint( bi_level_problem, [ s in 1:ip.num_scen, t in 1:ip.num_time_periods, n in 1:ip.num_nodes, m = n],
+       # β_f_1[s,t,n,m] - β_f_2[s,t,n,m] >= 0  
+    #)
 
     @constraint(bi_level_problem, [ s in 1:ip.num_scen, t in 1:ip.num_time_periods, n in 1:ip.num_nodes, i = 1:ip.num_prod, e in 1:ip.num_conv],
         ip.scen_prob[s] * ( (market == "perfect" ? 0 : (ip.id_intercept[s,t,n] * ( sum( g_conv[s,t,n,i,e1]  for e1 in 1:ip.num_conv) + sum(  g_VRES[s,t,n,i,r] for r in 1:ip.num_VRES))))
