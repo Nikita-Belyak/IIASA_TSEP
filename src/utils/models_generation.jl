@@ -108,7 +108,7 @@ function single_level_problem_generation(ip::initial_parameters)
     )
     
     # Primal feasibility for the transmission 
-    @constraint(single_level_problem, [s in 1:ip.num_scen, t in 1:ip.num_time_periods, n in 1:ip.num_nodes, m in 1:n-1],
+    @constraint(single_level_problem, [s in 1:ip.num_scen, t in 1:ip.num_time_periods, n in 1:ip.num_nodes, m in 1:n],
         f[s,t,n,m] == 0 
     )
 
