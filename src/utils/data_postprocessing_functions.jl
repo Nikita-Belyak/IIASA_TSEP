@@ -143,6 +143,16 @@ function print_output(src_link::String, ip::initial_parameters, ob_val::Float64,
 end
 
 
+""" 
+!WORKS only for the 3 nodes instance with 2 porucers yet! The .xlsx files with correspondent names 
+and sheets should already exist prior to the call of the function.
+function write_xlsx_output prints the capacity expansion relatedoutput resutling from the model optimisation 
+    in the user friendly format that is further saved in the correspondent .xlsx file 
+    in the folder specified in the arguments of the function with the first sheet correspondet to vres, 
+    second to conventional and the third to transmission parameters respectively
+Arguments of the function:
+
+""" 
 function write_xlsx_output(data_src_link::String, input_parameters::initial_parameters, vres::Array{Float64}, conv::Array{Float64}, transm::Array{Float64}, market::String)
     round_digits = 3
     columns_vres = Vector()
