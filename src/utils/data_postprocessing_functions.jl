@@ -30,11 +30,11 @@ function print_output(src_link::String, ip::initial_parameters, ob_val::Float64,
     f = round.(f, digits = round_digits)
     
     if model == "single_level"
-        io = open(src_link*"/single_level_problem_output.txt" ,"w")
+        io = open(src_link*"/single_level_problem_output_"*(input_parameters.transm.budget_limits[1,2]*scaling_factor == 1000000 ? "1M" : "100K") * "_budget_per_line.txt" ,"w")
     elseif model == "bi_level_cournot"
-        io = open(src_link*"/bi_level_cournot_problem_output.txt" ,"w")
+        io = open(src_link*"/bi_level_cournot_problem_output_" *(input_parameters.transm.budget_limits[1,2]*scaling_factor == 1000000 ? "1M" : "100K") * "_budget_per_line.txt" ,"w")
     else 
-        io = open(src_link*"/bi_level_perfect_problem_output.txt" ,"w")
+        io = open(src_link*"/bi_level_perfect_problem_output_" *(input_parameters.transm.budget_limits[1,2]*scaling_factor == 1000000 ? "1M" : "100K") * "_budget_per_line.txt" ,"w")
     end
 
     println(io, "OBJECTIVE FUNCTION VALUE  $(ob_val*sf)")
@@ -140,4 +140,54 @@ function print_output(src_link::String, ip::initial_parameters, ob_val::Float64,
     println(io, "\n")
 
     close(io)
+end
+
+
+function write_xlsx_output(data_src_link::String, input_parameters::initial_parameters, vres::Array{Float64}, conv::Array{Float64}, transm::Array{Float64}, market::String)
+    round_digits = 3
+    columns_vres = Vector()
+
+    g_VRES_plus = [ vres[1,:,:]'
+                    vres[2,:,:]'
+                    vres[3,:,:]']
+
+    push!(columns_vres, round.(g_VRES_plus[:,1], digits = round_digits))
+    push!(columns_vres, round.(g_VRES_plus[:,2], digits = round_digits))
+
+    columns_conv = Vector()
+
+    g_conv_plus = [ conv[1,:,:]'
+                    conv[2,:,:]'
+                    conv[3,:,:]']
+          
+
+    push!(columns_conv, round.(g_conv_plus[:,1], digits = round_digits))
+    push!(columns_conv, round.(g_conv_plus[:,2], digits = round_digits))
+    
+ 
+    columns_transm = Vector()
+
+    push!(columns_transm, round.(transm[:,1], digits = round_digits))
+    push!(columns_transm, round.(transm[:,2], digits = round_digits))
+    push!(columns_transm, round.(transm[:,3], digits = round_digits))
+
+    labels_transm = [ "node_1", "node_2", "node_3"]
+    labels = [ "producer_1", "producer_2"]
+
+    XLSX.openxlsx(data_src_link*"/" * market * "_"* (input_parameters.transm.budget_limits[1,2]*scaling_factor == 1000000 ? "1M" : "100K")*"_budget_per_line.xlsx", mode="rw") do xf
+        sheet = xf["Sheet1"]
+        @show sheet
+        XLSX.writetable!(sheet, columns_vres, labels, anchor_cell=XLSX.CellRef("B2"))
+        #XLSX.rename!(sheet, "/vres")
+
+        sheet = xf["Sheet2"]
+        XLSX.writetable!(sheet, columns_conv, labels, anchor_cell=XLSX.CellRef("B2"))
+        #XLSX.rename!(sheet, "/conv")
+
+        sheet = xf["Sheet3"]
+        XLSX.writetable!(sheet, columns_transm, labels_transm, anchor_cell=XLSX.CellRef("B2"))
+        #XLSX.rename!(sheet, "transm")
+
+
+    end
 end

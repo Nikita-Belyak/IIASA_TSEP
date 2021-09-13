@@ -158,3 +158,4 @@ function availability_factor_generation(data_src_link::String, N_nodes::Int64, N
     return A_VRES
 
 end
+

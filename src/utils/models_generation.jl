@@ -391,7 +391,7 @@ function bi_level_problem_generation(ip::initial_parameters, market::String)
     #)
 
     @constraint( bi_level_problem, [ s in 1:ip.num_scen, t in 1:ip.num_time_periods, n in 1:ip.num_nodes, m in n+1:ip.num_nodes],
-        β_f_1[s,t,n,m] - β_f_2[s,t,n,m] >= 0  
+        θ[s,t,n] - θ[s,t,m] + β_f_1[s,t,n,m] - β_f_2[s,t,n,m] == 0  
     )
     
     #@constraint( bi_level_problem, [ s in 1:ip.num_scen, t in 1:ip.num_time_periods, n in 1:ip.num_nodes, m in 1:n-1],
@@ -400,7 +400,7 @@ function bi_level_problem_generation(ip::initial_parameters, market::String)
 
         
     @constraint( bi_level_problem, [ s in 1:ip.num_scen, t in 1:ip.num_time_periods, n in 1:ip.num_nodes, m in 1:n],
-        β_f_1[s,t,n,m] - β_f_2[s,t,n,m] + λ_f[s,t,n,m] >= 0  
+        β_f_1[s,t,n,m] - β_f_2[s,t,n,m] + λ_f[s,t,n,m] == 0  
     )
 
     #@constraint( bi_level_problem, [ s in 1:ip.num_scen, t in 1:ip.num_time_periods, n in 1:ip.num_nodes, m = n],
