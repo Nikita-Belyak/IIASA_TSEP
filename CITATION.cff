@@ -6,3 +6,6 @@ authors:
 title: "IIASA YSSP 2021 Software"
 version: 1.0.0
 date-released: 2021-09-14
+publisher : GitHub,
+journal : GitHub repository,
+howpublished : {\url{https://github.com/Nikita-Belyak/IIASA_TSEP}},
